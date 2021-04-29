@@ -7,7 +7,7 @@ final class ChildrenNodeFieldGenerator extends AbstractFieldGenerator
 {
     public function getContents(): string
     {
-        return implode("\n", [
+        return implode(PHP_EOL, [
             $this->getIntroduction(),
         ]);
     }

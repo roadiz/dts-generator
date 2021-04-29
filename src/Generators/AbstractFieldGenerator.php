@@ -43,7 +43,7 @@ abstract class AbstractFieldGenerator
 
     public function getContents(): string
     {
-        return implode("\n", [
+        return implode(PHP_EOL, [
                 $this->getIntroduction(),
                 $this->getDeclaration()
             ]);
@@ -70,7 +70,7 @@ abstract class AbstractFieldGenerator
      */
     public function getIntroduction(): string
     {
-        return implode("\n", array_map(function (string $line) {
+        return implode(PHP_EOL, array_map(function (string $line) {
             return static::INDENTATION_MARK . '// ' . $line;
         }, $this->getIntroductionLines()));
     }

@@ -23,7 +23,7 @@ final class DeclarationGenerator
         $this->generatorFactory = $generatorFactory;
 
         if (empty($nodeTypes)) {
-            $this->nodeTypes = $this->generatorFactory->getNodeTypesBag()->all();
+            $this->nodeTypes = array_unique($this->generatorFactory->getNodeTypesBag()->all());
         } else {
             $this->nodeTypes = $nodeTypes;
         }
@@ -39,7 +39,7 @@ final class DeclarationGenerator
             $blocks[] = $this->generatorFactory->createForNodeType($nodeType)->getContents();
         }
 
-        return implode('\n\n', $blocks);
+        return implode(PHP_EOL.PHP_EOL, $blocks);
     }
 
     private function getHeader(): string
@@ -47,7 +47,7 @@ final class DeclarationGenerator
         return <<<EOT
 /*
  * This is an automated Roadiz interface declaration file.
- * RoadizNodesSources, RoadizDocument and other mentioned types are part of 
+ * RoadizNodesSources, RoadizDocument and other mentioned types are part of
  * roadiz/abstract-api-client package which must be installed in your project.
  *
  * @see https://github.com/roadiz/abstract-api-client

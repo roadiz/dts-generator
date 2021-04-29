@@ -49,7 +49,7 @@ final class NodeTypeGenerator
          *     color: string
          * }
          */
-        return implode("\n", [
+        return implode(PHP_EOL, [
             $this->getIntroduction(),
             $this->getInterfaceBody()
         ]);
@@ -63,30 +63,32 @@ final class NodeTypeGenerator
             '}'
         ];
 
-        return implode("\n", $lines);
+        return implode(PHP_EOL, $lines);
     }
 
     protected function getIntroduction(): string
     {
         $lines = [
+            '',
             $this->nodeType->getLabel(),
-            $this->nodeType->getName(),
+            ''
         ];
         if (!empty($this->nodeType->getDescription())) {
             $lines[] = $this->nodeType->getDescription();
         }
 
+        $lines[] = 'Reachable: ' . $this->generatorFactory->getHumanBool($this->nodeType->isReachable());
         $lines[] = 'Publishable: ' . $this->generatorFactory->getHumanBool($this->nodeType->isPublishable());
         $lines[] = 'Visible: ' . $this->generatorFactory->getHumanBool($this->nodeType->isVisible());
 
-        return implode("\n", array_map(function (string $line) {
+        return implode(PHP_EOL, array_map(function (string $line) {
             return '// ' . $line;
         }, $lines));
     }
 
     protected function getFieldsContents(): string
     {
-        return implode("\n", array_map(function (AbstractFieldGenerator $abstractFieldGenerator) {
+        return implode(PHP_EOL, array_map(function (AbstractFieldGenerator $abstractFieldGenerator) {
             return $abstractFieldGenerator->getContents();
         }, $this->fieldGenerators));
     }
