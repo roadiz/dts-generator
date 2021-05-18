@@ -3,7 +3,7 @@
     "description": "Roadiz sub-package which generates Typescript interfaces skeleton based on your schema",
     "type": "library",
     "require": {
-        "roadiz/nodetype-contracts": "^1.0",
+        "roadiz/nodetype-contracts": "dev-main",
         "symfony/http-foundation": "~5.0.7 || ^5.2"
     },
     "require-dev": {

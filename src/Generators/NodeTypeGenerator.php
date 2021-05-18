@@ -5,6 +5,7 @@ namespace RZ\Roadiz\Typescript\Declaration\Generators;
 
 use RZ\Roadiz\Contracts\NodeType\NodeTypeFieldInterface;
 use RZ\Roadiz\Contracts\NodeType\NodeTypeInterface;
+use RZ\Roadiz\Contracts\NodeType\SerializableInterface;
 use RZ\Roadiz\Typescript\Declaration\DeclarationGeneratorFactory;
 
 final class NodeTypeGenerator
@@ -30,7 +31,9 @@ final class NodeTypeGenerator
 
         /** @var NodeTypeFieldInterface $field */
         foreach ($this->nodeType->getFields() as $field) {
-            $this->fieldGenerators[] = $this->generatorFactory->createForNodeTypeField($field);
+            if (!($field instanceof SerializableInterface) || !$field->isExcludedFromSerialization()) {
+                $this->fieldGenerators[] = $this->generatorFactory->createForNodeTypeField($field);
+            }
         }
     }
 
