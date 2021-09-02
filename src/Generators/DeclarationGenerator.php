@@ -57,7 +57,7 @@ final class DeclarationGenerator
  * @see https://docs.roadiz.io/en/latest/developer/nodes-system/intro.html#what-is-a-node-type
  */
 
-import { RoadizDocument, RoadizNodesSources } from '@roadiz/abstract-api-client'
+import { RoadizNodesSources, RoadizDocument } from '@roadiz/abstract-api-client/dist/types/roadiz'
 EOT;
     }
 }
