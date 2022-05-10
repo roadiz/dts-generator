@@ -26,9 +26,9 @@ final class NodeReferencesFieldGenerator extends AbstractFieldGenerator
             return [];
         }
         $nodeTypeNames = explode(',', $this->field->getDefaultValues());
-        return array_map(function (string $name) {
+        return array_values(array_filter(array_map(function (string $name) {
             return $this->nodeTypesBag->get(trim($name));
-        }, $nodeTypeNames);
+        }, $nodeTypeNames)));
     }
 
     private function getUnionType(): string
