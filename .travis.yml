@@ -3,6 +3,7 @@ sudo: required
 php:
     - 7.4
     - 8.0
+    - 8.1
     - nightly
 install:
     - curl -s http://getcomposer.org/installer | php
