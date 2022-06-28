@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace RZ\Roadiz\Typescript\Declaration\Generators;
@@ -39,7 +40,7 @@ final class DeclarationGenerator
             $blocks[] = $this->generatorFactory->createForNodeType($nodeType)->getContents();
         }
 
-        return implode(PHP_EOL.PHP_EOL, $blocks);
+        return implode(PHP_EOL . PHP_EOL, $blocks);
     }
 
     private function getHeader(): string

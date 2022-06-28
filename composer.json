@@ -7,7 +7,7 @@
         "symfony/http-foundation": "~5.0.7 || ^5.2"
     },
     "require-dev": {
-        "phpstan/phpstan": "^0.12.85",
+        "phpstan/phpstan": "^1.5.3",
         "squizlabs/php_codesniffer": "^3.6"
     },
     "license": "MIT",

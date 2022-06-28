@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace RZ\Roadiz\Typescript\Declaration\Generators;
@@ -27,7 +28,8 @@ final class NodeReferencesFieldGenerator extends AbstractFieldGenerator
         }
         $nodeTypeNames = explode(',', $this->field->getDefaultValues());
         return array_values(array_filter(array_map(function (string $name) {
-            return $this->nodeTypesBag->get(trim($name));
+            $nodeType = $this->nodeTypesBag->get(trim($name));
+            return $nodeType instanceof NodeTypeInterface ? $nodeType : null;
         }, $nodeTypeNames)));
     }
 
