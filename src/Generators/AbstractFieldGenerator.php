@@ -10,7 +10,7 @@ use Symfony\Component\HttpFoundation\ParameterBag;
 abstract class AbstractFieldGenerator
 {
     // Four spaces
-    const INDENTATION_MARK = '    ';
+    public const INDENTATION_MARK = '    ';
 
     protected NodeTypeFieldInterface $field;
     protected ParameterBag $nodeTypesBag;
