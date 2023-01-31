@@ -26,15 +26,12 @@ final class ScalarFieldGenerator extends AbstractFieldGenerator
             case $this->field->isDecimal():
             case $this->field->isInteger():
                 return 'number';
-            case $this->field->isYaml():
-            case $this->field->isJson():
-            case $this->field->isSingleProvider():
-                return 'object';
             case $this->field->isCollection():
             case $this->field->isMultiProvider():
-                return 'Array<object>';
+                // Data cannot be known, this depends on user configuration
+                return 'Array<unknown>';
             default:
-                return 'any';
+                return 'unknown';
         }
     }
 }
