@@ -1,6 +1,8 @@
 # dts-generator
 Roadiz sub-package which generates Typescript interface declaration skeleton based on your schema.
 
+[![Unit tests, static analysis and code style](https://github.com/roadiz/dts-generator/actions/workflows/run-test.yml/badge.svg?branch=develop)](https://github.com/roadiz/dts-generator/actions/workflows/run-test.yml)
+
 ### Usage
 
 ```php
