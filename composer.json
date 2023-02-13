@@ -14,7 +14,9 @@
     "authors": [
         {
             "name": "Ambroise Maupate",
-            "email": "ambroise@rezo-zero.com"
+            "email": "ambroise@roadiz.io",
+            "homepage": "https://www.roadiz.io",
+            "role": "Lead developer"
         }
     ],
     "autoload": {
