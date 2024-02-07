@@ -62,7 +62,7 @@ final class NodeTypeGenerator
     protected function getInterfaceBody(): string
     {
         $lines = [
-            'export interface ' . $this->nodeType->getSourceEntityClassName() . ' extends RoadizNodesSources {',
+            'interface ' . $this->nodeType->getSourceEntityClassName() . ' extends RoadizNodesSources {',
             $this->getFieldsContents(),
             '}'
         ];
