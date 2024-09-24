@@ -17,8 +17,14 @@ use Symfony\Component\HttpFoundation\ParameterBag;
 
 final class DeclarationGeneratorFactory
 {
-    public function __construct(private readonly ParameterBag $nodeTypesBag)
+    private ParameterBag $nodeTypesBag;
+
+    /**
+     * @param ParameterBag $nodeTypesBag
+     */
+    public function __construct(ParameterBag $nodeTypesBag)
     {
+        $this->nodeTypesBag = $nodeTypesBag;
     }
 
     /**
@@ -54,12 +60,18 @@ final class DeclarationGeneratorFactory
      */
     public function createForNodeTypeField(NodeTypeFieldInterface $field): AbstractFieldGenerator
     {
-        return match (true) {
-            $field->isDocuments() => new DocumentsFieldGenerator($field, $this->nodeTypesBag),
-            $field->isNodes() => new NodeReferencesFieldGenerator($field, $this->nodeTypesBag),
-            $field->isChildrenNodes() => new ChildrenNodeFieldGenerator($field, $this->nodeTypesBag),
-            $field->isMultiple(), $field->isEnum() => new EnumFieldGenerator($field, $this->nodeTypesBag),
-            default => new ScalarFieldGenerator($field, $this->nodeTypesBag),
-        };
+        switch (true) {
+            case $field->isDocuments():
+                return new DocumentsFieldGenerator($field, $this->nodeTypesBag);
+            case $field->isNodes():
+                return new NodeReferencesFieldGenerator($field, $this->nodeTypesBag);
+            case $field->isChildrenNodes():
+                return new ChildrenNodeFieldGenerator($field, $this->nodeTypesBag);
+            case $field->isMultiple():
+            case $field->isEnum():
+                return new EnumFieldGenerator($field, $this->nodeTypesBag);
+            default:
+                return new ScalarFieldGenerator($field, $this->nodeTypesBag);
+        }
     }
 }
