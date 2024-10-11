@@ -9,6 +9,7 @@ use RZ\Roadiz\Typescript\Declaration\DeclarationGeneratorFactory;
 
 final class DeclarationGenerator
 {
+    private DeclarationGeneratorFactory $generatorFactory;
     /**
      * @var array<NodeTypeInterface>
      */
@@ -18,10 +19,10 @@ final class DeclarationGenerator
      * @param DeclarationGeneratorFactory $generatorFactory
      * @param NodeTypeInterface[] $nodeTypes
      */
-    public function __construct(
-        private readonly DeclarationGeneratorFactory $generatorFactory,
-        array $nodeTypes = []
-    ) {
+    public function __construct(DeclarationGeneratorFactory $generatorFactory, array $nodeTypes = [])
+    {
+        $this->generatorFactory = $generatorFactory;
+
         if (empty($nodeTypes)) {
             $this->nodeTypes = array_unique($this->generatorFactory->getNodeTypesBag()->all());
         } else {
