@@ -9,7 +9,6 @@ use RZ\Roadiz\Typescript\Declaration\DeclarationGeneratorFactory;
 
 final class DeclarationGenerator
 {
-    private DeclarationGeneratorFactory $generatorFactory;
     /**
      * @var array<NodeTypeInterface>
      */
@@ -19,10 +18,10 @@ final class DeclarationGenerator
      * @param DeclarationGeneratorFactory $generatorFactory
      * @param NodeTypeInterface[] $nodeTypes
      */
-    public function __construct(DeclarationGeneratorFactory $generatorFactory, array $nodeTypes = [])
-    {
-        $this->generatorFactory = $generatorFactory;
-
+    public function __construct(
+        private readonly DeclarationGeneratorFactory $generatorFactory,
+        array $nodeTypes = []
+    ) {
         if (empty($nodeTypes)) {
             $this->nodeTypes = array_unique($this->generatorFactory->getNodeTypesBag()->all());
         } else {
@@ -40,7 +39,22 @@ final class DeclarationGenerator
             $blocks[] = $this->generatorFactory->createForNodeType($nodeType)->getContents();
         }
 
+        $blocks[] = $this->getAllTypesInterface();
+
         return implode(PHP_EOL . PHP_EOL, $blocks);
+    }
+
+    private function getAllTypesInterface(): string
+    {
+        $nodeTypeNames = array_map(function (NodeTypeInterface $nodeType) {
+            return $nodeType->getSourceEntityClassName();
+        }, $this->nodeTypes);
+
+        $nodeTypeNames = implode(' | ', $nodeTypeNames);
+
+        return <<<EOT
+export type AllRoadizNodesSources = {$nodeTypeNames};
+EOT;
     }
 
     private function getHeader(): string
