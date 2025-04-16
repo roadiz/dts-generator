@@ -9,6 +9,7 @@ use RZ\Roadiz\Typescript\Declaration\DeclarationGeneratorFactory;
 
 final class DeclarationGenerator
 {
+    private DeclarationGeneratorFactory $generatorFactory;
     /**
      * @var array<NodeTypeInterface>
      */
@@ -18,10 +19,10 @@ final class DeclarationGenerator
      * @param DeclarationGeneratorFactory $generatorFactory
      * @param NodeTypeInterface[] $nodeTypes
      */
-    public function __construct(
-        private readonly DeclarationGeneratorFactory $generatorFactory,
-        array $nodeTypes = []
-    ) {
+    public function __construct(DeclarationGeneratorFactory $generatorFactory, array $nodeTypes = [])
+    {
+        $this->generatorFactory = $generatorFactory;
+
         if (empty($nodeTypes)) {
             $this->nodeTypes = array_unique($this->generatorFactory->getNodeTypesBag()->all());
         } else {
@@ -63,16 +64,16 @@ EOT;
 /*
  * This is an automated Roadiz interface declaration file.
  * RoadizNodesSources, RoadizDocument and other mentioned types are part of
- * @roadiz/types package which must be installed in your project.
+ * roadiz/abstract-api-client package which must be installed in your project.
  *
- * @see https://github.com/roadiz/types
+ * @see https://github.com/roadiz/abstract-api-client
  *
  * Roadiz CMS node-types interfaces
  *
  * @see https://docs.roadiz.io/en/latest/developer/nodes-system/intro.html#what-is-a-node-type
  */
 
-import type { RoadizNodesSources, RoadizDocument } from '@roadiz/types'
+import { RoadizNodesSources, RoadizDocument } from '@roadiz/abstract-api-client/dist/types/roadiz'
 EOT;
     }
 }
