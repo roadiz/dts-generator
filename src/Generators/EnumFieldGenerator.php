@@ -10,20 +10,15 @@ final class EnumFieldGenerator extends AbstractFieldGenerator
     {
         switch (true) {
             case $this->field->isEnum():
-                if (!empty($this->field->getDefaultValues())) {
-                    $defaultValues = array_filter(
-                        array_map(
-                            'trim',
-                            explode(',', $this->field->getDefaultValues())
-                        )
-                    );
-                    if (count($defaultValues) > 0) {
-                        $defaultValues = array_map(function (string $value) {
-                            return '\'' . $value . '\'';
-                        }, $defaultValues);
-                        return implode(' | ', $defaultValues) . ' | null';
-                    }
+                $defaultValues = $this->field->getDefaultValuesAsArray();
+                if (!empty($defaultValues) && count($defaultValues) > 0) {
+                    $defaultValues = array_map(function (string $value) {
+                        return '\''.$value.'\'';
+                    }, $defaultValues);
+
+                    return implode(' | ', $defaultValues).' | null';
                 }
+
                 return 'string';
             case $this->field->isMultiple():
                 return 'Array<string>';
@@ -35,9 +30,10 @@ final class EnumFieldGenerator extends AbstractFieldGenerator
     protected function getIntroductionLines(): array
     {
         $lines = parent::getIntroductionLines();
-        if (!empty($this->field->getDefaultValues())) {
-            $lines[] = 'Possible values: ' . $this->field->getDefaultValues();
+        if (!empty($this->field->getDefaultValuesAsArray())) {
+            $lines[] = 'Possible values: '.json_encode($this->field->getDefaultValuesAsArray());
         }
+
         return $lines;
     }
 }
