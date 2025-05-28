@@ -9,20 +9,18 @@ use RZ\Roadiz\Typescript\Declaration\DeclarationGeneratorFactory;
 
 final class DeclarationGenerator
 {
-    private DeclarationGeneratorFactory $generatorFactory;
     /**
      * @var array<NodeTypeInterface>
      */
     private array $nodeTypes;
 
     /**
-     * @param DeclarationGeneratorFactory $generatorFactory
      * @param NodeTypeInterface[] $nodeTypes
      */
-    public function __construct(DeclarationGeneratorFactory $generatorFactory, array $nodeTypes = [])
-    {
-        $this->generatorFactory = $generatorFactory;
-
+    public function __construct(
+        private readonly DeclarationGeneratorFactory $generatorFactory,
+        array $nodeTypes = [],
+    ) {
         if (empty($nodeTypes)) {
             $this->nodeTypes = array_unique($this->generatorFactory->getNodeTypesBag()->all());
         } else {
@@ -40,7 +38,22 @@ final class DeclarationGenerator
             $blocks[] = $this->generatorFactory->createForNodeType($nodeType)->getContents();
         }
 
-        return implode(PHP_EOL . PHP_EOL, $blocks);
+        $blocks[] = $this->getAllTypesInterface();
+
+        return implode(PHP_EOL.PHP_EOL, $blocks);
+    }
+
+    private function getAllTypesInterface(): string
+    {
+        $nodeTypeNames = array_map(function (NodeTypeInterface $nodeType) {
+            return $nodeType->getSourceEntityClassName();
+        }, $this->nodeTypes);
+
+        $nodeTypeNames = implode(' | ', $nodeTypeNames);
+
+        return <<<EOT
+export type AllRoadizNodesSources = {$nodeTypeNames};
+EOT;
     }
 
     private function getHeader(): string
@@ -49,16 +62,16 @@ final class DeclarationGenerator
 /*
  * This is an automated Roadiz interface declaration file.
  * RoadizNodesSources, RoadizDocument and other mentioned types are part of
- * roadiz/abstract-api-client package which must be installed in your project.
+ * @roadiz/types package which must be installed in your project.
  *
- * @see https://github.com/roadiz/abstract-api-client
+ * @see https://github.com/roadiz/types
  *
  * Roadiz CMS node-types interfaces
  *
  * @see https://docs.roadiz.io/en/latest/developer/nodes-system/intro.html#what-is-a-node-type
  */
 
-import { RoadizNodesSources, RoadizDocument } from '@roadiz/abstract-api-client/dist/types/roadiz'
+import type { RoadizNodesSources, RoadizDocument } from '@roadiz/types'
 EOT;
     }
 }

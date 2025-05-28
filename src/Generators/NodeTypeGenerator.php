@@ -11,24 +11,16 @@ use RZ\Roadiz\Typescript\Declaration\DeclarationGeneratorFactory;
 
 final class NodeTypeGenerator
 {
-    private NodeTypeInterface $nodeType;
     /**
      * @var array<AbstractFieldGenerator>
      */
     private array $fieldGenerators;
-    private DeclarationGeneratorFactory $generatorFactory;
 
-    /**
-     * @param NodeTypeInterface $nodeType
-     * @param DeclarationGeneratorFactory $generatorFactory
-     */
     public function __construct(
-        NodeTypeInterface $nodeType,
-        DeclarationGeneratorFactory $generatorFactory
+        private readonly NodeTypeInterface $nodeType,
+        private readonly DeclarationGeneratorFactory $generatorFactory,
     ) {
-        $this->nodeType = $nodeType;
         $this->fieldGenerators = [];
-        $this->generatorFactory = $generatorFactory;
 
         /** @var NodeTypeFieldInterface $field */
         foreach ($this->nodeType->getFields() as $field) {
@@ -55,16 +47,16 @@ final class NodeTypeGenerator
          */
         return implode(PHP_EOL, [
             $this->getIntroduction(),
-            $this->getInterfaceBody()
+            $this->getInterfaceBody(),
         ]);
     }
 
     protected function getInterfaceBody(): string
     {
         $lines = [
-            'interface ' . $this->nodeType->getSourceEntityClassName() . ' extends RoadizNodesSources {',
+            'export interface '.$this->nodeType->getSourceEntityClassName().' extends RoadizNodesSources {',
             $this->getFieldsContents(),
-            '}'
+            '}',
         ];
 
         return implode(PHP_EOL, $lines);
@@ -75,18 +67,18 @@ final class NodeTypeGenerator
         $lines = [
             '',
             $this->nodeType->getLabel(),
-            ''
+            '',
         ];
         if (!empty($this->nodeType->getDescription())) {
             $lines[] = $this->nodeType->getDescription();
         }
 
-        $lines[] = 'Reachable: ' . $this->generatorFactory->getHumanBool($this->nodeType->isReachable());
-        $lines[] = 'Publishable: ' . $this->generatorFactory->getHumanBool($this->nodeType->isPublishable());
-        $lines[] = 'Visible: ' . $this->generatorFactory->getHumanBool($this->nodeType->isVisible());
+        $lines[] = 'Reachable: '.$this->generatorFactory->getHumanBool($this->nodeType->isReachable());
+        $lines[] = 'Publishable: '.$this->generatorFactory->getHumanBool($this->nodeType->isPublishable());
+        $lines[] = 'Visible: '.$this->generatorFactory->getHumanBool($this->nodeType->isVisible());
 
         return implode(PHP_EOL, array_map(function (string $line) {
-            return '// ' . $line;
+            return '// '.$line;
         }, $lines));
     }
 
