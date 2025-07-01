@@ -15,21 +15,12 @@ use RZ\Roadiz\Typescript\Declaration\Generators\NodeTypeGenerator;
 use RZ\Roadiz\Typescript\Declaration\Generators\ScalarFieldGenerator;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
-final class DeclarationGeneratorFactory
+final readonly class DeclarationGeneratorFactory
 {
-    private ParameterBag $nodeTypesBag;
-
-    /**
-     * @param ParameterBag $nodeTypesBag
-     */
-    public function __construct(ParameterBag $nodeTypesBag)
+    public function __construct(private ParameterBag $nodeTypesBag)
     {
-        $this->nodeTypesBag = $nodeTypesBag;
     }
 
-    /**
-     * @return ParameterBag
-     */
     public function getNodeTypesBag(): ParameterBag
     {
         return $this->nodeTypesBag;
@@ -40,11 +31,6 @@ final class DeclarationGeneratorFactory
         return $bool ? 'true' : 'false';
     }
 
-    /**
-     * @param NodeTypeInterface $nodeType
-     *
-     * @return NodeTypeGenerator
-     */
     public function createForNodeType(NodeTypeInterface $nodeType): NodeTypeGenerator
     {
         return new NodeTypeGenerator(
@@ -53,25 +39,14 @@ final class DeclarationGeneratorFactory
         );
     }
 
-    /**
-     * @param NodeTypeFieldInterface $field
-     *
-     * @return AbstractFieldGenerator
-     */
     public function createForNodeTypeField(NodeTypeFieldInterface $field): AbstractFieldGenerator
     {
-        switch (true) {
-            case $field->isDocuments():
-                return new DocumentsFieldGenerator($field, $this->nodeTypesBag);
-            case $field->isNodes():
-                return new NodeReferencesFieldGenerator($field, $this->nodeTypesBag);
-            case $field->isChildrenNodes():
-                return new ChildrenNodeFieldGenerator($field, $this->nodeTypesBag);
-            case $field->isMultiple():
-            case $field->isEnum():
-                return new EnumFieldGenerator($field, $this->nodeTypesBag);
-            default:
-                return new ScalarFieldGenerator($field, $this->nodeTypesBag);
-        }
+        return match (true) {
+            $field->isDocuments() => new DocumentsFieldGenerator($field, $this->nodeTypesBag),
+            $field->isNodes() => new NodeReferencesFieldGenerator($field, $this->nodeTypesBag),
+            $field->isChildrenNodes() => new ChildrenNodeFieldGenerator($field, $this->nodeTypesBag),
+            $field->isMultiple(), $field->isEnum() => new EnumFieldGenerator($field, $this->nodeTypesBag),
+            default => new ScalarFieldGenerator($field, $this->nodeTypesBag),
+        };
     }
 }
