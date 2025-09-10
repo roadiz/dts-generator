@@ -15,12 +15,11 @@ final class DeclarationGenerator
     private array $nodeTypes;
 
     /**
-     * @param DeclarationGeneratorFactory $generatorFactory
      * @param NodeTypeInterface[] $nodeTypes
      */
     public function __construct(
         private readonly DeclarationGeneratorFactory $generatorFactory,
-        array $nodeTypes = []
+        array $nodeTypes = [],
     ) {
         if (empty($nodeTypes)) {
             $this->nodeTypes = array_unique($this->generatorFactory->getNodeTypesBag()->all());
@@ -41,14 +40,12 @@ final class DeclarationGenerator
 
         $blocks[] = $this->getAllTypesInterface();
 
-        return implode(PHP_EOL . PHP_EOL, $blocks);
+        return implode(PHP_EOL.PHP_EOL, $blocks);
     }
 
     private function getAllTypesInterface(): string
     {
-        $nodeTypeNames = array_map(function (NodeTypeInterface $nodeType) {
-            return $nodeType->getSourceEntityClassName();
-        }, $this->nodeTypes);
+        $nodeTypeNames = array_map(fn (NodeTypeInterface $nodeType) => $nodeType->getSourceEntityClassName(), $this->nodeTypes);
 
         $nodeTypeNames = implode(' | ', $nodeTypeNames);
 
