@@ -8,14 +8,16 @@ use RZ\Roadiz\Contracts\NodeType\NodeTypeInterface;
 
 final class NodeReferencesFieldGenerator extends AbstractFieldGenerator
 {
+    #[\Override]
     protected function getNullableAssertion(): string
     {
         return ''; // always available even if empty
     }
 
+    #[\Override]
     protected function getType(): string
     {
-        return 'Array<' . $this->getUnionType() . '>';
+        return 'Array<'.$this->getUnionType().'>';
     }
 
     /**
@@ -23,12 +25,15 @@ final class NodeReferencesFieldGenerator extends AbstractFieldGenerator
      */
     private function getLinkedNodeTypes(): array
     {
-        if (null === $this->field->getDefaultValues()) {
-            return [];
+        $nodeTypeNames = $this->field->getDefaultValuesAsArray();
+
+        if (0 === count($nodeTypeNames)) {
+            return $nodeTypeNames;
         }
-        $nodeTypeNames = explode(',', $this->field->getDefaultValues());
+
         return array_values(array_filter(array_map(function (string $name) {
             $nodeType = $this->nodeTypesBag->get(trim($name));
+
             return $nodeType instanceof NodeTypeInterface ? $nodeType : null;
         }, $nodeTypeNames)));
     }
@@ -41,17 +46,17 @@ final class NodeReferencesFieldGenerator extends AbstractFieldGenerator
             return 'RoadizNodesSources';
         }
 
-        return implode(' | ', array_map(function (NodeTypeInterface $nodeType) {
-            return $nodeType->getSourceEntityClassName();
-        }, $nodeTypes));
+        return implode(' | ', array_map(fn (NodeTypeInterface $nodeType) => $nodeType->getSourceEntityClassName(), $nodeTypes));
     }
 
+    #[\Override]
     protected function getIntroductionLines(): array
     {
         $lines = parent::getIntroductionLines();
-        if (!empty($this->field->getDefaultValues())) {
-            $lines[] = 'Possible values: ' . $this->field->getDefaultValues();
+        if (!empty($this->field->getDefaultValuesAsArray())) {
+            $lines[] = 'Possible values: '.json_encode($this->field->getDefaultValuesAsArray());
         }
+
         return $lines;
     }
 }
