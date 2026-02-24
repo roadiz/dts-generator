@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace RZ\Roadiz\Typescript\Declaration;
 
-use RZ\Roadiz\Contracts\NodeType\NodeTypeClassLocatorInterface;
 use RZ\Roadiz\Contracts\NodeType\NodeTypeFieldInterface;
 use RZ\Roadiz\Contracts\NodeType\NodeTypeInterface;
 use RZ\Roadiz\Typescript\Declaration\Generators\AbstractFieldGenerator;
@@ -18,10 +17,8 @@ use Symfony\Component\HttpFoundation\ParameterBag;
 
 final readonly class DeclarationGeneratorFactory
 {
-    public function __construct(
-        private ParameterBag $nodeTypesBag,
-        private NodeTypeClassLocatorInterface $nodeTypeClassLocator,
-    ) {
+    public function __construct(private ParameterBag $nodeTypesBag)
+    {
     }
 
     public function getNodeTypesBag(): ParameterBag
@@ -38,8 +35,7 @@ final readonly class DeclarationGeneratorFactory
     {
         return new NodeTypeGenerator(
             $nodeType,
-            $this,
-            $this->nodeTypeClassLocator
+            $this
         );
     }
 
@@ -47,7 +43,7 @@ final readonly class DeclarationGeneratorFactory
     {
         return match (true) {
             $field->isDocuments() => new DocumentsFieldGenerator($field, $this->nodeTypesBag),
-            $field->isNodes() => new NodeReferencesFieldGenerator($this->nodeTypeClassLocator, $field, $this->nodeTypesBag),
+            $field->isNodes() => new NodeReferencesFieldGenerator($field, $this->nodeTypesBag),
             $field->isChildrenNodes() => new ChildrenNodeFieldGenerator($field, $this->nodeTypesBag),
             $field->isMultiple(), $field->isEnum() => new EnumFieldGenerator($field, $this->nodeTypesBag),
             default => new ScalarFieldGenerator($field, $this->nodeTypesBag),
