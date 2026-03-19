@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace RZ\Roadiz\Typescript\Declaration\Generators;
 
-use RZ\Roadiz\Contracts\NodeType\NodeTypeClassLocatorInterface;
 use RZ\Roadiz\Contracts\NodeType\NodeTypeFieldInterface;
 use RZ\Roadiz\Contracts\NodeType\NodeTypeInterface;
 use RZ\Roadiz\Contracts\NodeType\SerializableInterface;
@@ -20,7 +19,6 @@ final class NodeTypeGenerator
     public function __construct(
         private readonly NodeTypeInterface $nodeType,
         private readonly DeclarationGeneratorFactory $generatorFactory,
-        private readonly NodeTypeClassLocatorInterface $nodeTypeClassLocator,
     ) {
         $this->fieldGenerators = [];
 
@@ -56,7 +54,7 @@ final class NodeTypeGenerator
     private function getInterfaceBody(): string
     {
         $lines = [
-            'export interface '.$this->nodeTypeClassLocator->getSourceEntityClassName($this->nodeType).' extends RoadizNodesSources {',
+            'export interface '.$this->nodeType->getSourceEntityClassName().' extends RoadizNodesSources {',
             $this->getFieldsContents(),
             '}',
         ];
