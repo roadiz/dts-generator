@@ -15,7 +15,7 @@ final class NodeReferencesFieldGenerator extends AbstractFieldGenerator
 
     protected function getType(): string
     {
-        return 'Array<'.$this->getUnionType().'>';
+        return 'Array<' . $this->getUnionType() . '>';
     }
 
     /**
@@ -23,15 +23,12 @@ final class NodeReferencesFieldGenerator extends AbstractFieldGenerator
      */
     private function getLinkedNodeTypes(): array
     {
-        $nodeTypeNames = $this->field->getDefaultValuesAsArray();
-
-        if (0 === count($nodeTypeNames)) {
-            return $nodeTypeNames;
+        if (null === $this->field->getDefaultValues()) {
+            return [];
         }
-
+        $nodeTypeNames = explode(',', $this->field->getDefaultValues());
         return array_values(array_filter(array_map(function (string $name) {
             $nodeType = $this->nodeTypesBag->get(trim($name));
-
             return $nodeType instanceof NodeTypeInterface ? $nodeType : null;
         }, $nodeTypeNames)));
     }
@@ -52,10 +49,9 @@ final class NodeReferencesFieldGenerator extends AbstractFieldGenerator
     protected function getIntroductionLines(): array
     {
         $lines = parent::getIntroductionLines();
-        if (!empty($this->field->getDefaultValuesAsArray())) {
-            $lines[] = 'Possible values: '.json_encode($this->field->getDefaultValuesAsArray());
+        if (!empty($this->field->getDefaultValues())) {
+            $lines[] = 'Possible values: ' . $this->field->getDefaultValues();
         }
-
         return $lines;
     }
 }
