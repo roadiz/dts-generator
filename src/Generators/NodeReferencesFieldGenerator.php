@@ -4,21 +4,10 @@ declare(strict_types=1);
 
 namespace RZ\Roadiz\Typescript\Declaration\Generators;
 
-use RZ\Roadiz\Contracts\NodeType\NodeTypeClassLocatorInterface;
-use RZ\Roadiz\Contracts\NodeType\NodeTypeFieldInterface;
 use RZ\Roadiz\Contracts\NodeType\NodeTypeInterface;
-use Symfony\Component\HttpFoundation\ParameterBag;
 
 final class NodeReferencesFieldGenerator extends AbstractFieldGenerator
 {
-    public function __construct(
-        private readonly NodeTypeClassLocatorInterface $nodeTypeClassLocator,
-        NodeTypeFieldInterface $field,
-        ParameterBag $nodeTypesBag,
-    ) {
-        parent::__construct($field, $nodeTypesBag);
-    }
-
     #[\Override]
     protected function getNullableAssertion(): string
     {
@@ -57,7 +46,7 @@ final class NodeReferencesFieldGenerator extends AbstractFieldGenerator
             return 'RoadizNodesSources';
         }
 
-        return implode(' | ', array_map($this->nodeTypeClassLocator->getSourceEntityClassName(...), $nodeTypes));
+        return implode(' | ', array_map(fn (NodeTypeInterface $nodeType) => $nodeType->getSourceEntityClassName(), $nodeTypes));
     }
 
     #[\Override]
