@@ -3,6 +3,7 @@ name: Static analysis and code style
 on:
     push:
         branches:
+            - main
             - develop
             - 'release/**'
             - 'hotfix/**'
@@ -19,7 +20,7 @@ jobs:
         runs-on: ubuntu-latest
         strategy:
             matrix:
-                php-version: ['8.3', '8.4', '8.5']
+                php-version: ['8.3', '8.4']
         steps:
             - uses: shivammathur/setup-php@v2
               with:
