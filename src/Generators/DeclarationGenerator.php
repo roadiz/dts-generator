@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace RZ\Roadiz\Typescript\Declaration\Generators;
 
-use RZ\Roadiz\Contracts\NodeType\NodeTypeClassLocatorInterface;
 use RZ\Roadiz\Contracts\NodeType\NodeTypeInterface;
 use RZ\Roadiz\Typescript\Declaration\DeclarationGeneratorFactory;
 
@@ -16,12 +15,12 @@ final class DeclarationGenerator
     private array $nodeTypes;
 
     /**
+     * @param DeclarationGeneratorFactory $generatorFactory
      * @param NodeTypeInterface[] $nodeTypes
      */
     public function __construct(
         private readonly DeclarationGeneratorFactory $generatorFactory,
-        private readonly NodeTypeClassLocatorInterface $nodeTypeClassLocator,
-        array $nodeTypes = [],
+        array $nodeTypes = []
     ) {
         if (empty($nodeTypes)) {
             $this->nodeTypes = array_unique($this->generatorFactory->getNodeTypesBag()->all());
@@ -42,12 +41,14 @@ final class DeclarationGenerator
 
         $blocks[] = $this->getAllTypesInterface();
 
-        return implode(PHP_EOL.PHP_EOL, $blocks);
+        return implode(PHP_EOL . PHP_EOL, $blocks);
     }
 
     private function getAllTypesInterface(): string
     {
-        $nodeTypeNames = array_map($this->nodeTypeClassLocator->getSourceEntityClassName(...), $this->nodeTypes);
+        $nodeTypeNames = array_map(function (NodeTypeInterface $nodeType) {
+            return $nodeType->getSourceEntityClassName();
+        }, $this->nodeTypes);
 
         $nodeTypeNames = implode(' | ', $nodeTypeNames);
 

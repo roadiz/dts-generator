@@ -6,7 +6,6 @@ namespace RZ\Roadiz\Typescript\Declaration\Generators;
 
 final class ScalarFieldGenerator extends AbstractFieldGenerator
 {
-    #[\Override]
     protected function getType(): string
     {
         return match (true) {
