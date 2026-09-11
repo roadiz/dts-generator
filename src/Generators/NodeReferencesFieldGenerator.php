@@ -4,18 +4,31 @@ declare(strict_types=1);
 
 namespace RZ\Roadiz\Typescript\Declaration\Generators;
 
+use RZ\Roadiz\Contracts\NodeType\NodeTypeClassLocatorInterface;
+use RZ\Roadiz\Contracts\NodeType\NodeTypeFieldInterface;
 use RZ\Roadiz\Contracts\NodeType\NodeTypeInterface;
+use Symfony\Component\HttpFoundation\ParameterBag;
 
 final class NodeReferencesFieldGenerator extends AbstractFieldGenerator
 {
+    public function __construct(
+        private readonly NodeTypeClassLocatorInterface $nodeTypeClassLocator,
+        NodeTypeFieldInterface $field,
+        ParameterBag $nodeTypesBag,
+    ) {
+        parent::__construct($field, $nodeTypesBag);
+    }
+
+    #[\Override]
     protected function getNullableAssertion(): string
     {
         return ''; // always available even if empty
     }
 
+    #[\Override]
     protected function getType(): string
     {
-        return 'Array<' . $this->getUnionType() . '>';
+        return 'Array<'.$this->getUnionType().'>';
     }
 
     /**
@@ -23,12 +36,15 @@ final class NodeReferencesFieldGenerator extends AbstractFieldGenerator
      */
     private function getLinkedNodeTypes(): array
     {
-        if (null === $this->field->getDefaultValues()) {
-            return [];
+        $nodeTypeNames = $this->field->getDefaultValuesAsArray();
+
+        if (0 === count($nodeTypeNames)) {
+            return $nodeTypeNames;
         }
-        $nodeTypeNames = explode(',', $this->field->getDefaultValues());
+
         return array_values(array_filter(array_map(function (string $name) {
             $nodeType = $this->nodeTypesBag->get(trim($name));
+
             return $nodeType instanceof NodeTypeInterface ? $nodeType : null;
         }, $nodeTypeNames)));
     }
@@ -41,17 +57,17 @@ final class NodeReferencesFieldGenerator extends AbstractFieldGenerator
             return 'RoadizNodesSources';
         }
 
-        return implode(' | ', array_map(function (NodeTypeInterface $nodeType) {
-            return $nodeType->getSourceEntityClassName();
-        }, $nodeTypes));
+        return implode(' | ', array_map($this->nodeTypeClassLocator->getSourceEntityClassName(...), $nodeTypes));
     }
 
+    #[\Override]
     protected function getIntroductionLines(): array
     {
         $lines = parent::getIntroductionLines();
-        if (!empty($this->field->getDefaultValues())) {
-            $lines[] = 'Possible values: ' . $this->field->getDefaultValues();
+        if (!empty($this->field->getDefaultValuesAsArray())) {
+            $lines[] = 'Possible values: '.json_encode($this->field->getDefaultValuesAsArray());
         }
+
         return $lines;
     }
 }
